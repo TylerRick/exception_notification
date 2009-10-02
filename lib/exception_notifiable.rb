@@ -103,12 +103,13 @@ module ExceptionNotifiable
 
     def normalize_notice(notice) #:nodoc:
       data = {
-        :environment => ENV.to_hash,
+        :environment          => ENV.to_hash,
+        :location_preposition => 'in'
       }
 
       if self.respond_to?(:controller_name) && self.respond_to?(:action_name)
         data[:location] = "#{controller_name}##{action_name}"
-        data[:controller] =self
+        data[:controller] = self
       end
 
       if self.respond_to? :request
@@ -119,6 +120,8 @@ module ExceptionNotifiable
           :params         => request.parameters.to_hash,
           :url            => "#{request.protocol}#{request.host}#{request.request_uri}",
         })
+        data[:location_preposition] = 'on'
+        data[:location] = data[:url]
         data[:environment].merge!(request.env.to_hash)
       end
 
@@ -141,12 +144,12 @@ module ExceptionNotifiable
         })
         data.merge!(notice)
       when Exception
-        data.merge!(exception_to_data(notice))
+        data.merge!(exception_to_hash(notice))
       end
       data
     end
 
-    def exception_to_data(exception)
+    def exception_to_hash(exception)
       data = {
         :exception     => exception,
         :error_class   => exception.class.name,
@@ -168,6 +171,12 @@ module ExceptionNotifiable
     end
 
     def sanitize_backtrace(trace)
+      # Trace is usually an array of lines, but in the case of ActionView::TemplateErrors, it is an array containing one huge string with many lines
+      #  > ["a\nb", "c"].map!{|a| a.lines.map(&:chomp).to_a}.flatten!
+      # => ["a", "b", "c"]
+      trace.map!{|a| a.lines.map(&:chomp).to_a}.flatten!
+
+      # No remove rails_root from paths
       re = Regexp.new(/^#{Regexp.escape(rails_root)}\//)
       trace.map { |line| Pathname.new(line.gsub(re, "")).cleanpath.to_s }
     end

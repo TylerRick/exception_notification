@@ -40,7 +40,7 @@ class ExceptionNotifier < ActionMailer::Base
   def exception_notification(notice={})
     content_type "text/plain"
 
-    subject    "#{email_prefix}in #{notice[:location]}: #{notice[:error_class]}: #{notice[:message]}"
+    subject    "#{email_prefix}#{notice[:location_preposition]} #{notice[:location]}: #{notice[:error_class]}: #{notice[:message]}"
 
     recipients exception_recipients
     from       sender_address
