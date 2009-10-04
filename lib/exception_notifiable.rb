@@ -115,7 +115,8 @@ module ExceptionNotifiable
       if self.respond_to? :request
         data.merge!({
           :request        => request,
-          :remote_address => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+          #:remote_address => (request.env["HTTP_X_FORWARDED_HOST"] || request.env["HTTP_HOST"]),
+          :remote_address => request.remote_ip,
           :rails_root     => rails_root,
           :params         => request.parameters.to_hash,
           :url            => "#{request.protocol}#{request.host}#{request.request_uri}",
