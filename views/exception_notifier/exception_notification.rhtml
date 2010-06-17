@@ -3,8 +3,10 @@ The following error occurred in <%= @location %>:
 Class:
 <%= @error_class %> 
 
+<%- unless @error_class == @message -%>
 Message:
 <%= @message %>
+<%- end -%>
 
 <%- if false && @backtrace -%>
 First line of backtrace:
