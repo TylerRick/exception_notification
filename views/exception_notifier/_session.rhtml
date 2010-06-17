@@ -1,2 +1,4 @@
-* session id: <%= @request.session.instance_variable_get(:@session_id).inspect %>
-* data: <%= PP.pp(@request.session.instance_variable_get(:@data),"").gsub(/\n/, "\n  ").strip %>
+* session data: <%= PP.pp(@session_data,"").gsub(/\n/, "\n  ").strip %>
+<%- if @session_id -%>
+* session id: <%= @session_id.inspect %>
+<%- end -%>

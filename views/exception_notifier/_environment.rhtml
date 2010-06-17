@@ -1,7 +1,12 @@
-<% max = @request.env.keys.max { |a,b| a.length <=> b.length } -%>
-<% @request.env.keys.sort.each do |key| -%>
-* <%= "%-*s: %s" % [max.length, key, filter_sensitive_post_data_from_env(key, @request.env[key])] %>
+<% max = @environment.keys.max { |a,b| a.length <=> b.length } -%>
+<% @environment.keys.sort.each do |key| -%>
+* <%= "%-*s: %s" % [max.length, key, filter_sensitive_post_data_from_env(key, @environment[key])] %>
 <% end -%>
 
-* Process: <%= $$ %>
+Server:
+-------
+
 * Server : <%= `hostname -s`.chomp %>
+* Process ID: <%= $$ %> / Port: <%= @environment['HTTP_HOST'] %>
+* Git revision: <%= configatron.deploy_revision %>
+* Ruby: <%= RUBY_VERSION %>
